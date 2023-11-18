@@ -7,6 +7,10 @@ your-site/whmcs/modules/gateways/zarinpal.php
 ```
 your-site/whmcs/modules/gateways/callback/zarinpal.php
 ```
+دایرکتوری ZarinpalAddon را نیز از آدرس زیر حذف نمایید :
+```
+your-site/whmcs/modules/addons/ZarinpalAddon
+```
 
 ۲. سپس ماژول را در روت whmcs اکسترکت نمایید
 
