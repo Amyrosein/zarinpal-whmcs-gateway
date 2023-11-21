@@ -25,13 +25,13 @@ $zarinpal_urls = [
 
 $gatewayParams = getGatewayVariables('zarinpal');
 
-if ( ! isset($_REQUEST['uuid'])) {
+if (!isset($_REQUEST['uuid'])) {
     header("Location: " . $gatewayParams['systemurl']);
     die;
 }
 
 
-if ( ! isset($_REQUEST['Authority'], $_GET['Status'])) {
+if (!isset($_REQUEST['Authority'], $_GET['Status'])) {
     header("Location: " . $gatewayParams['systemurl']);
     die;
 }
@@ -41,21 +41,21 @@ $invoiceId = checkCbInvoiceID($_REQUEST['uuid'], $gatewayParams['name']);
 $invoice   = Capsule::table('tblinvoices')->where('id', $invoiceId)->where('status', 'Unpaid')->first();
 $invoice_paid = Capsule::table('tblinvoices')->where('id', $invoiceId)->where('status', 'Paid')->first();
 
-if ($invoice_paid){
+if ($invoice_paid) {
     header("Location: " . $gatewayParams['systemurl'] . 'viewinvoice.php?id=' . $invoice_paid->id);
     die;
 }
 
-if ( ! $invoice) {
+if (!$invoice) {
     die("Invoice not found");
 }
 
 $amount = ceil($invoice->total * ($gatewayParams['currencyType'] == 'IRT' ? 10 : 1));
 
 $result = zarinpal_req($zarinpal_urls['verify_url'][$gatewayParams['testMode'] == 'on' ? 'sandbox' : 'production'], [
-    'merchant_id' => $gatewayParams['merchantID'],
+    'merchant_id' => $gatewayParams['MerchantID'],
     'authority'   => $_GET['Authority'],
-    'amount'      => $amount ,
+    'amount'      => $amount,
 ]);
 
 
@@ -70,9 +70,9 @@ if ($_GET['Status'] === 'OK') {
             0,
             $gatewayParams['paymentmethod']
         );
-
     } elseif (is_numeric($result['data']['code']) && (int)$result['data']['code'] === 101) {
         echo "Verified before";
+        sleep(1);
     } else {
         logTransaction($gatewayParams['name'], array(
             'Code'        => 'Zarinpal Status Code',
@@ -81,12 +81,10 @@ if ($_GET['Status'] === 'OK') {
             'Invoice'     => $invoiceId,
             'Amount'      => (int)$invoice->total,
         ), 'Failure');
-//        $err = 'Code: ' . $result['errors']['code'] . ', Message: ' . $result['errors']['message'];
-//        echo $err;
     }
 } else {
-    die("Pardakht Namoafagh");
+    echo "پرداخت ناموفق";
+    sleep(3);
 }
 header("Location: " . $gatewayParams['systemurl'] . 'viewinvoice.php?id=' . $invoice->id);
 die;
-

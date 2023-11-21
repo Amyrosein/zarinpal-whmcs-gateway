@@ -3,7 +3,7 @@
 use WHMCS\Database\Capsule;
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] === 'GET')) {
-    if ( ! defined("WHMCS")) {
+    if (!defined("WHMCS")) {
         die("This file cannot be accessed directly");
     }
 }
@@ -74,7 +74,7 @@ function zarinpal_config()
             'Type'  => 'System',
             'Value' => 'پرداخت امن زرین پال',
         ),
-        'merchantID'   => array(
+        'MerchantID'   => array(
             'FriendlyName' => 'مرچنت کد',
             'Type'         => 'text',
             'Size'         => '255',
@@ -91,7 +91,7 @@ function zarinpal_config()
             'Description'  => 'واحد پولی را انتخاب کنید',
         ),
         // the yesno field type displays a single checkbox option
-        'sandboxMode'  => array(
+        'testMode'  => array(
             'FriendlyName' => 'حالت سندباکس',
             'Type'         => 'yesno',
             'Description'  => 'برای فعال کردن حالت سندباکس ( تستی ) تیک بزنید',
@@ -128,7 +128,8 @@ function zarinpal_link($params)
     return $htmlOutput;
 }
 
-if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' && isset($_POST['invoice_id']) && is_numeric(
+if (
+    strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' && isset($_POST['invoice_id']) && is_numeric(
         $_POST['invoice_id']
     )
 ) {
@@ -139,8 +140,8 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' && isset($_POST['invoice_i
     if (isset($_SESSION['uid'])) {
         $gatewayParams = getGatewayVariables('zarinpal');
 
-//        echo "<pre>". print_r($gatewayParams, true) . "</pre>";
-//        die();
+        //        echo "<pre>". print_r($gatewayParams, true) . "</pre>";
+        //        die();
 
         $invoice = Capsule::table('tblinvoices')
             ->where('id', $_POST['invoice_id'])
@@ -148,18 +149,18 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' && isset($_POST['invoice_i
             ->where('userid', $_SESSION['uid'])
             ->first();
 
-//        echo "<pre>". print_r($invoice, true) . "</pre>";
-//        die();
-        if ( ! $invoice) {
+        //        echo "<pre>". print_r($invoice, true) . "</pre>";
+        //        die();
+        if (!$invoice) {
             die("Invoice not found");
         }
         $client = Capsule::table('tblclients')->where('id', $_SESSION['uid'])->first();
         $amount = ceil($invoice->total * ($gatewayParams['currencyType'] == 'IRT' ? 10 : 1));
-//        echo "<pre>" . print_r(str_replace([' ', '+98.'], '', $client->phonenumber), true) . "</pre>";
+        //        echo "<pre>" . print_r(str_replace([' ', '+98.'], '', $client->phonenumber), true) . "</pre>";
 
 
         $data = [
-            'merchant_id'  => $gatewayParams['merchantID'],
+            'merchant_id'  => $gatewayParams['MerchantID'],
             'amount'       => $amount,
             'description'  => sprintf('پرداخت فاکتور #%s', $invoice->id),
             'metadata'     => ['email' => $client->email, 'order_id' => strval($invoice->id)],
@@ -180,8 +181,8 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' && isset($_POST['invoice_i
             die;
         }
 
-//        echo "<pre>" . print_r($result, true) . "</pre>";
-//        echo "<pre>" . print_r($gatewayParams, true) . "</pre>";
+        //        echo "<pre>" . print_r($result, true) . "</pre>";
+        //        echo "<pre>" . print_r($gatewayParams, true) . "</pre>";
         if (is_numeric($result['data']['code']) && (int)$result['data']['code'] === 100) {
             header(
                 'Location: ' . $zarinpal_urls['redirect_url'][$gatewayParams['testMode'] == 'on' ? 'sandbox' : 'production'] . $result['data']['authority']
