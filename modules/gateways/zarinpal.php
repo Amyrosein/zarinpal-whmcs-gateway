@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * ZarinPal online gateway for whmcs 
+ *
+ * @website		ZarinPal.com
+ * @copyright	(c) 2023 - ZarinPal
+ * @author	a.taghizade@zarinpal.com
+ * github https://github.com/Amyrosein
+ */
+
 use WHMCS\Database\Capsule;
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] === 'GET')) {

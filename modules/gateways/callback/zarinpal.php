@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * ZarinPal online gateway for whmcs 
+ *
+ * @website		ZarinPal.com
+ * @copyright	(c) 2023 - ZarinPal
+ * @author	a.taghizade@zarinpal.com
+ * Github https://github.com/Amyrosein
+ */
+
 use WHMCS\Database\Capsule;
 
 require_once __DIR__ . '/../../../init.php';
