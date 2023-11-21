@@ -2,7 +2,6 @@
 
 /**
  * ZarinPal online gateway for whmcs 
- *
  * @website		ZarinPal.com
  * @copyright	(c) 2023 - ZarinPal
  * @author	a.taghizade@zarinpal.com
