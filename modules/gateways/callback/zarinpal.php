@@ -92,8 +92,8 @@ if ($_GET['Status'] === 'OK') {
         ), 'Failure');
     }
 } else {
-    echo "پرداخت ناموفق";
-    sleep(3);
+    header("Refresh: 3; URL=" . $gatewayParams['systemurl'] . 'viewinvoice.php?id=' . $invoice->id);
+    echo '<h2 style="color: red; font-size: 40px; margin: 100px auto; width: 500px;" >پرداخت شما ناموفق بود</h2>';
 }
 header("Location: " . $gatewayParams['systemurl'] . 'viewinvoice.php?id=' . $invoice->id);
 die;
