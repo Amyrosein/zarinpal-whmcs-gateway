@@ -157,22 +157,18 @@ if (
             ->where('userid', $_SESSION['uid'])
             ->first();
 
-        //        echo "<pre>". print_r($invoice, true) . "</pre>";
-        //        die();
         if (!$invoice) {
             die("Invoice not found");
         }
         $client = Capsule::table('tblclients')->where('id', $_SESSION['uid'])->first();
-        $amount = ceil($invoice->total * ($gatewayParams['currencyType'] == 'IRT' ? 10 : 1));
-        //        echo "<pre>" . print_r(str_replace([' ', '+98.'], '', $client->phonenumber), true) . "</pre>";
-
-
+        
         $data = [
             'merchant_id'  => $gatewayParams['MerchantID'],
-            'amount'       => $amount,
+            'amount'       => ceil($invoice->total),
             'description'  => sprintf('پرداخت فاکتور #%s', $invoice->id),
             'metadata'     => ['email' => $client->email, 'order_id' => strval($invoice->id)],
             'callback_url' => $gatewayParams['systemurl'] . 'modules/gateways/callback/zarinpal.php?uuid=' . $invoice->id,
+            'currency'     => $gatewayParams['currencyType'],
         ];
         if (isset($client->phonenumber)) {
             $mobile                     = '0' . str_replace([' ', '+98.'], '', $client->phonenumber);
