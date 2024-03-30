@@ -58,12 +58,11 @@ if (!$invoice) {
     die("Invoice not found");
 }
 
-$amount = ceil($invoice->total * ($gatewayParams['currencyType'] == 'IRT' ? 10 : 1));
 
 $result = zarinpal_req($zarinpal_urls['verify_url'][$gatewayParams['testMode'] == 'on' ? 'sandbox' : 'production'], [
     'merchant_id' => $gatewayParams['MerchantID'],
     'authority'   => $_GET['Authority'],
-    'amount'      => $amount,
+    'amount'      => ceil($invoice->total),
 ]);
 
 
